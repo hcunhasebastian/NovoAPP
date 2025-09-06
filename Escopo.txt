@@ -1,0 +1,138 @@
+Escopo de Projeto: Sistema de
+Gerenciamento de Agenda para Salão de
+Beleza (React + Supabase)
+1. Visão Geral e Objetivo
+O objetivo principal é automatizar o processo de agendamento para reduzir o tempo gasto
+em marcações manuais, eliminar conflitos de horário e fornecer uma visão clara do
+faturamento e performance das profissionais através de um dashboard intuitivo e relatórios
+precisos.
+2. Perfis de Usuário e Níveis de Acesso
+O sistema contará com dois perfis de acesso distintos, cada um com suas permissões e telas
+específicas, gerenciados através do sistema de autenticação e Row Level Security (RLS) do
+Supabase.
+2.1. Administrador
+O perfil de administrador possui acesso total ao sistema. Suas responsabilidades são mais
+estratégicas e gerenciais.
+● Permissões:
+○ Acesso a um dashboard com indicadores de performance do salão.
+○ Gerenciamento completo de usuários (convidar, editar perfil e desativar atendentes).
+○ Gerenciamento dos cadastros base do sistema (serviços, profissionais).
+○ Acesso a relatórios gerenciais estratégicos (faturamento, produtividade por
+profissional, etc.).
+2.2. Atendente
+O perfil de atendente é focado na operação diária do salão, responsável por toda a gestão da
+agenda.
+● Permissões:
+○ Visualizar a agenda de todas as profissionais.
+○ Criar, editar e cancelar agendamentos para os clientes.
+○ Cadastrar novos clientes no momento do agendamento.
+○ Alterar o status de um agendamento (ex: de Agendado para Realizado ou Não
+Compareceu).
+○ Gerar e exportar relatórios operacionais sobre os agendamentos.
+3. Módulos e Funcionalidades
+Módulo 1: Autenticação e Segurança
+● 1.1. Tela de Login: Campos para e-mail e senha, utilizando o serviço Supabase Auth.
+● 1.2. Controle de Sessão: Gerenciamento de sessão segura via JWT (JSON Web Tokens)
+provido pelo Supabase.
+● 1.3. Logout: Botão para encerrar a sessão de forma segura.
+● 1.4. Direcionamento por Perfil: Após o login, a aplicação React identificará o perfil do
+usuário (armazenado em uma tabela de perfis) e renderizará os componentes e rotas
+correspondentes.
+Módulo 2: Dashboard do Administrador
+Interface visual com os principais indicadores do salão para tomada de decisão.
+● 2.1. Indicadores Chave (KPIs):
+○ Número de agendamentos do dia/semana/mês.
+○ Total faturado (com base nos agendamentos Realizados).
+○ Taxa de não comparecimento (%).
+● 2.2. Gráficos:
+○ Gráfico de pizza com os serviços mais procurados no mês.
+○ Gráfico de barras comparando o número de atendimentos por profissional.
+● 2.3. Atalhos Rápidos: Componentes de navegação para "Gerenciar Usuários" e
+"Gerenciar Serviços".
+Módulo 3: Cadastros Gerais (Gerenciado pelo Administrador)
+Área para o administrador gerenciar as informações que servem de base para o sistema.
+● 3.1. Gerenciamento de Usuários (Atendentes):
+○ Interface para listar, convidar (via Supabase Auth), editar perfis e desativar as
+atendentes.
+● 3.2. Gerenciamento de Profissionais (Cabeleireiras):
+○ Interface para cadastrar as profissionais que realizam os serviços (Nome,
+especialidade, etc.).
+● 3.3. Gerenciamento de Serviços:
+○ Interface para cadastrar os serviços oferecidos pelo salão (Nome do serviço, valor,
+tempo médio de duração).
+Módulo 4: Gestão da Agenda (Foco da Atendente)
+O coração do sistema, onde a operação do dia a dia acontece.
+● 4.1. Visualização em Calendário:
+○ Componente de calendário interativo (ex: FullCalendar, TUI Calendar) com visão
+diária e semanal.
+○ Filtro para visualizar a agenda de uma profissional específica ou de todas juntas.
+○ Os agendamentos terão cores diferentes de acordo com seu status.
+● 4.2. Novo Agendamento:
+○ Ao clicar em um horário vago, abrirá um modal para criar o agendamento. A lógica de
+validação de disponibilidade e prevenção de sobreposição de horários será feita
+através de uma Supabase Function (Edge Function) para garantir consistência.
+○ Campos:
+■ Cliente: Campo de busca que pesquisa clientes já cadastrados. Se o cliente não
+existir, um botão permitirá o cadastro rápido.
+■ Serviço: Lista de seleção com os serviços cadastrados.
+■ Profissional: Lista de seleção com as profissionais.
+■ Data e Hora: Preenchidos automaticamente, mas editáveis.
+● 4.3. Gerenciar Agendamento:
+○ Ao clicar em um agendamento existente, será possível editar as informações e mudar
+o status (Agendado, Confirmado, Realizado, Cancelado, Não Compareceu).
+Módulo 5: Relatórios (Acessível pela Atendente)
+Funcionalidade para extrair dados operacionais da agenda.
+● 5.1. Tela de Filtros: Permitir que a atendente filtre os agendamentos por:
+○ Intervalo de datas.
+○ Profissional específica.
+○ Status do agendamento.
+● 5.2. Geração e Exportação:
+○ Após aplicar os filtros, o sistema exibirá uma tabela com os resultados.
+○ Um botão "Exportar para Excel (.csv)" permitirá baixar a lista.
+Módulo 6: Migração de Dados (Ação Única)
+● 6.1. Importação da Planilha:
+○ Será desenvolvido um script (Node.js ou similar) para ler a planilha existente, tratar
+os dados e inseri-los nas tabelas do Supabase usando a biblioteca cliente.
+4. Requisitos Técnicos e Não Funcionais
+● Tecnologias de Frontend: React com Vite. (Recomendação: uso de bibliotecas de
+componentes como Material-UI, Chakra UI, ou styling com Tailwind CSS).
+● Backend e Banco de Dados: Supabase (utilizando seu serviço de Banco de Dados
+PostgreSQL, Autenticação, e Edge Functions para lógica de backend).
+● Arquitetura: Arquitetura baseada em componentes no frontend (React) com
+comunicação direta e segura com a API do Supabase.
+● Requisitos Não Funcionais:
+○ Usabilidade: A interface deve ser intuitiva, reativa e de fácil aprendizado.
+○ Desempenho: As consultas à agenda e a geração de relatórios devem ser rápidas,
+aproveitando a indexação do PostgreSQL.
+○ Segurança: Acesso aos dados controlado por políticas de segurança a nível de linha
+(Row Level Security - RLS) no Supabase.
+○ Disponibilidade: Alta disponibilidade garantida pela infraestrutura do Supabase.
+5. Estrutura do Banco de Dados (Proposta para
+Supabase/PostgreSQL)
+A autenticação será gerenciada pela tabela auth.users do Supabase. A tabela perfis abaixo
+armazenará informações públicas e o papel de cada usuário.
+Tabela Colunas Observações
+perfis id (FK para auth.users),
+nome_completo, perfil
+('administrador' ou
+'atendente'), status
+Armazena dados públicos e
+o papel de cada usuário
+autenticado.
+clientes id (PK), nome, telefone Cadastro dos clientes do
+salão.
+profissionais id (PK), nome Cadastro das profissionais
+que atendem.
+servicos id (PK), nome_servico,
+duracao_minutos, valor
+Lista de serviços
+oferecidos pelo salão.
+agendamentos id (PK), id_cliente (FK),
+id_profissional (FK),
+id_servico (FK),
+id_usuario_criador (FK para
+perfis), data_hora_inicio,
+data_hora_fim, status
+Tabela central que conecta
+todas as informações.
+*Nota: (PK) significa Chave Primária e (FK) significa Chave Estr
